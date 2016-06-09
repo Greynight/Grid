@@ -1,0 +1,30 @@
+{
+  "name": "grid",
+  "version": "0.0.1",
+  "description": "lightweight grid",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Greynight/Grid.git"
+  },
+  "keywords": [
+    "grid"
+  ],
+  "author": "Ivan Sidorenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Greynight/Grid/issues"
+  },
+  "homepage": "https://github.com/Greynight/Grid#readme",
+  "dependencies": {
+    "babel": "^6.5.2",
+    "lodash": "^4.13.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-templates": "^0.5.2",
+    "webpack": "^1.13.1"
+  }
+}

@@ -3,6 +3,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import uniqueId from 'lodash/uniqueId';
+
 import Rows from './rows';
 
 
@@ -10,24 +12,20 @@ class Grid extends React.Component {
 
   constructor(props) {
     super(props);
-
-    // TODO maybe save all these props to 'state' object
-    //this.state = {};
-
-    // columns list
-    if (!this.props.columns) {
-      this.props.columns = [];
-    }
-
-    // columns structure
-    if (!this.props.schema) {
-      this.props.schema = {};
-    }
-
-    // data
-    if (!this.props.data) {
-      this.props.data = {};
-    }
+console.log("constructor");
+    this.state = {
+      selectedRows: new Map(),
+      lastSelected: {},
+      isAllSelected: false,
+      // columns list
+      columns: this.props.columns || [],
+      // columns structure
+      schema: this.props.schema,
+      // grid data
+      data: this.applyData(this.props.data, this.props.isDataTransformed) || {},
+      // grid config
+      config: this.props.config
+    };
 
     if (!this.props.config || !this.props.schema) {
       throw new Error("Config or schema weren't defined");
@@ -36,7 +34,8 @@ class Grid extends React.Component {
 
   // TODO if not empty
   render = () => {
-    let {...props} = this.props;
+    console.log("render");
+    let {...props} = Object.assign({}, this.state, {grid: this});
 
     return (
       <div className="container-fluid">
@@ -45,7 +44,8 @@ class Grid extends React.Component {
   };
 
   renderGrid = () => {
-    let {...props} = this.props;
+    console.log("renderGrid");
+    let {...props} = Object.assign({}, this.state, {isDataTransformed: true});
 
     ReactDOM.render(<Grid {...props} />, document.getElementById(this.getConfig().parentId));
   };
@@ -53,25 +53,49 @@ class Grid extends React.Component {
   // TODO use setState for setters
 
   getConfig = () => {
-    return this.props.config;
+    return this.state.config;
   };
 
   setColumns = (columns = []) => {
-    this.props.columns = columns;
+    this.setState({columns});
   };
 
   clearColumns = () => {
-    this.props.columns.length = 0;
+    this.setState({
+      columns: []
+    });
   };
 
   getColumns = () => {
-    return this.props.columns;
+    return this.state.columns;
+  };
+
+  applyData = (data = {}, isDataTransformed) => {
+    let processedData = {};
+
+    if (isDataTransformed) {
+      processedData = Object.assign({}, data);
+    } else {
+      processedData = Object.assign({}, this.transformData(this.props.data));
+    }
+
+    return processedData;
   };
 
   setData = (data = {}) => {
     /*if (this.getColumns().length !== rows[0].length) {
      through new Error("Number of columns isn't equal to number of cells in a row");
      }*/
+    let transformedData = this.transformData(data);
+
+    this.setState({
+      data: Object.assign({}, transformedData)
+    });
+  };
+
+  transformData = (data = {}) => {
+    //console.log(data);
+    // TODO don't apply to already transformed data
     let transformedData = {};
 
     let dataKeys = Object.keys(data);
@@ -90,26 +114,146 @@ class Grid extends React.Component {
       transformedData[rowsSection] = transformedRows;
     }
 
-    this.props.data = Object.assign({}, transformedData);
+    return transformedData;
   };
 
   generateId = () => {
-
+    return uniqueId();
   };
 
-
-
   getData = () => {
-    return this.props.data;
+    return this.state.data;
   };
 
   clearData = () => {
-    //this.props.data.length = 0;
+    this.setState({
+      data: {}
+    });
   };
 
   isEmpty = () => {
-    //return !!this.props.data.length;
+    return !!this.state.data.length;
   };
+
+
+
+
+
+  // SELECTION
+  addToSelected(row) {
+    this.setState({
+      selectedRows: this.state.selectedRows.set(row.id, row)
+    });
+  }
+
+  removeFromSelected(row) {
+    this.setState({
+      selectedRows: this.state.selectedRows.delete(row.id)
+    });
+  }
+
+  /**
+   * Gets number of selected rows
+   * @returns {number}
+   */
+  getSelectedRowsCount() {
+    return this.getSelectedRows().size;
+  }
+
+  /**
+   * Returns a collection of selected rows
+   * @returns Map
+   */
+  getSelectedRows() {
+    return this.state.selectedRows;
+  }
+
+  getSelectedRowsIds() {
+    let ids = [];
+    this.getSelectedRows().forEach(item => ids.push(item.id));
+
+    return ids;
+  }
+
+  /**
+   * Returns previous selected row
+   * @returns {object}
+   */
+  getLastSelectedRow() {
+    return this.state.lastSelected;
+  }
+
+  setLastSelectedRow(row) {
+    this.setState({
+      lastSelected: Object.assign({}, row)
+    });
+  }
+
+  /**
+   * Clears collection of selected rows
+   */
+  clearSelectedRows() {
+    this.setState({
+      selectedRows: this.state.selectedRows.clear()
+    });
+  }
+
+  /**
+   * Called on checkbox click, toggles rows between selected and not selected state
+   * @param row
+   * @param event
+   */
+  toggleRowSelection(row, event = {}) {
+    debugger
+
+
+    let selectedRows = this.getSelectedRows();
+
+    if (!selectedRows.has(row.id)) {
+      this.addToSelected(row);
+    } else {
+      this.removeFromSelected(row);
+    }
+
+    // if click with shift button was used
+    if (this.getSelectedRowsCount() > 1 && event.shiftKey) {
+      this.selectRowsRange(row);
+    }
+
+    // If all rows are selected, set checkbox "select all"
+    if (this.state.data.length === this.getSelectedRowsCount()) {
+      this.state.isAllSelected = true;
+    } else {
+      this.state.isAllSelected = false;
+    }
+
+    this.setLastSelectedRow(row);
+
+
+    //console.log(this.getSelectedRows().entries());
+  }
+
+  /**
+   * Saves rows, selected using 'shift' key, to the selected rows
+   * @param row
+   */
+  selectRowsRange(row) {
+    let isInRange = false;
+    let lastSelectedRow = this.getLastSelectedRow();
+
+    for (let visibleRow of this.state.data) {
+      if ((visibleRow.id === lastSelectedRow.id || visibleRow.id === row.id) && !isInRange) {
+        isInRange = true;
+      } else if ((visibleRow.id === lastSelectedRow.id || visibleRow.id === row.id) && isInRange) {
+        isInRange = false;
+      } else {
+        if (isInRange) {
+          visibleRow.isSelected = true;
+          this.addToSelected(visibleRow);
+        }
+      }
+    }
+  }
 
 }
 

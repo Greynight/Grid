@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-class CheckboxCell extends React.Component {
+class ActionsCell extends React.Component {
   constructor(props) {
     super(props);
 
@@ -23,11 +23,11 @@ class CheckboxCell extends React.Component {
     //console.log("checked");
 
     /*row.setState({
-      row: {
-        data: [1,2,3],
-        id: row.id
-      }
-    });*/
+     row: {
+     data: [1,2,3],
+     id: row.id
+     }
+     });*/
     //row.props.data = [1,2,3];
     //row.forceUpdate();
   };
@@ -41,4 +41,4 @@ class CheckboxCell extends React.Component {
   }
 }
 
-export default CheckboxCell;
+export default ActionsCell;

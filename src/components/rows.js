@@ -1,7 +1,7 @@
 "use strict";
 
 import React from 'react';
-import uniqueId from 'lodash/uniqueId';
+//import uniqueId from 'lodash/uniqueId';
 
 import Row from './row';
 import TitleRow from './title-row';
@@ -28,6 +28,7 @@ class Rows extends React.Component {
   };
 
   getBodyRows = () => {
+    //console.log(this.props.data.rows);
     return this.props.data.rows;
   };
 
@@ -35,9 +36,8 @@ class Rows extends React.Component {
     return this.props.data.footerRows;
   };
 
-  // TODO not sure if this is the best approach index number of row/cell may be used
-  generateUniqueKey = () => {
-    return uniqueId('row');
+  createUniqueRowKey = (row) => {
+    return `row-${row.id}`;
   };
 
   // types can be 'title', 'header', 'body', 'footer'
@@ -53,7 +53,7 @@ class Rows extends React.Component {
       let headerRows = this.getHeaderRows();
 
       for (let headerRow of headerRows) {
-        gridRows.push(<Row type="Header" key={this.generateUniqueKey()} data={headerRow} {...props} />);
+        gridRows.push(<Row type="Header" key={this.createUniqueRowKey(headerRow)} data={headerRow} {...props} />);
       }
     }
 
@@ -62,7 +62,7 @@ class Rows extends React.Component {
       let rows = this.getBodyRows();
 
       for (let row of rows) {
-        gridRows.push(<Row type="Body" key={this.generateUniqueKey()} data={row} {...props} />);
+        gridRows.push(<Row type="Body" key={this.createUniqueRowKey(row)} data={row} {...props} />);
       }
     }
 
@@ -71,7 +71,7 @@ class Rows extends React.Component {
       let footerRows = this.getFooterRows();
 
       for (let footerRow of footerRows) {
-        gridRows.push(<Row type="Footer" key={this.generateUniqueKey()} data={footerRow} {...props} />);
+        gridRows.push(<Row type="Footer" key={this.createUniqueRowKey(footerRow)} data={footerRow} {...props} />);
       }
     }
 

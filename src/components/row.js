@@ -1,12 +1,13 @@
 "use strict";
 
 import React from 'react';
-import uniqueId from 'lodash/uniqueId';
+//import uniqueId from 'lodash/uniqueId';
 
 import CheckboxCell from './checkbox-cell';
 import HeaderCell from './header-cell';
 import BodyCell from './body-cell';
 import FooterCell from './footer-cell';
+import ActionsCell from './actions';
 
 class Row extends React.Component {
   constructor(props) {
@@ -17,20 +18,27 @@ class Row extends React.Component {
     };
   }
 
-  getCheckboxCell = () => {
-    return <CheckboxCell key={this.generateUniqueKey()} row={this} />;
+  getCheckboxCell = (checkboxId) => {
+    return <CheckboxCell key={checkboxId} row={this} grid={this.getGridInstance()} />;
   };
 
-  getHeaderCell = (cellData, columnSchema) => {
-    return <HeaderCell cellData={cellData} columnSchema={columnSchema} key={this.generateUniqueKey()} />;
+  // TODO configurable actions: delete, edit
+  // TODO add ?
+  // TODO icons?
+  getActionsCell = (actionId) => {
+    return <ActionsCell key={actionId} />;
   };
 
-  getBodyCell = (cellData, columnSchema) => {
-    return <BodyCell cellData={cellData} columnSchema={columnSchema} key={this.generateUniqueKey()} />;
+  getHeaderCell = (cellData, cellId, columnSchema) => {
+    return <HeaderCell cellId={cellId} cellData={cellData} columnSchema={columnSchema} key={cellId} grid={this.getGridInstance()} />;
   };
 
-  getFooterCell = (cellData, columnSchema) => {
-    return <FooterCell cellData={cellData} columnSchema={columnSchema} key={this.generateUniqueKey()} />;
+  getBodyCell = (cellData, cellId, columnSchema) => {
+    return <BodyCell cellId={cellId} cellData={cellData} columnSchema={columnSchema} key={cellId} grid={this.getGridInstance()} />;
+  };
+
+  getFooterCell = (cellData, cellId, columnSchema) => {
+    return <FooterCell cellId={cellId} cellData={cellData} columnSchema={columnSchema} key={cellId} grid={this.getGridInstance()} />;
   };
 
   getRowType = () => {
@@ -53,13 +61,28 @@ class Row extends React.Component {
     return this.props.config;
   };
 
+  getGridInstance = () => {
+    return this.props.grid;
+  };
+
   isSelectionEnabled = () => {
     return this.getConfig().enableSelection;
   };
 
-  // TODO not sure if this is the best approach index number of row/cell may be used
-  generateUniqueKey = () => {
-    return uniqueId('cell');
+  isEditingEnabled = () => {
+    return this.getConfig().enableEditing;
+  };
+
+  createUniqueCellId = (rowId, cellNum) => {
+    return `cell-${cellNum}-${rowId}`;
+  };
+
+  createUniqueCheckboxCellId = (rowId) => {
+    return `checkbox-${rowId}`;
+  };
+
+  createUniqueActionCellId = (rowId) => {
+    return `action-${rowId}`;
   };
 
   render() {
@@ -69,6 +92,7 @@ class Row extends React.Component {
     let columns = this.getColumns();
     let schema = this.getSchema();
     let row = this.getRowData();
+    let rowId = row.id;
 
     let columnsCount = columns.length;
 
@@ -76,15 +100,25 @@ class Row extends React.Component {
 
     // show checkbox column
     if (this.isSelectionEnabled()) {
-      cells.push(this.getCheckboxCell());
+      let checkboxId = this.createUniqueCheckboxCellId(rowId);
+
+      cells.push(this.getCheckboxCell(checkboxId));
     }
 
     for (let i = 0; i < columnsCount; i++) {
       let cellData = row.data[i];
+      let cellId = this.createUniqueCellId(rowId, i);
       let columnSchema = schema[columns[i]];
-      let cellTpl = this[getter](cellData, columnSchema);
+      let cellTpl = this[getter](cellData, cellId, columnSchema);
 
       cells.push(cellTpl);
+    }
+
+    // Show action buttons column
+    if (this.isEditingEnabled()) {
+      let actionCellId = this.createUniqueActionCellId(rowId);
+
+      cells.push(this.getActionsCell(actionCellId));
     }
 
     return (

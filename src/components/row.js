@@ -9,15 +9,21 @@ import BodyCell from './body-cell';
 import FooterCell from './footer-cell';
 import ActionsCell from './actions';
 
+const BODY_ROW = 'Body';
+const READ_TEMPLATE = 'template';
+const EDIT_TEMPLATE = 'writableTemplate';
+
 class Row extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      row: this.props.data
+      row: this.props.data,
+      templateType: READ_TEMPLATE
     };
   }
 
+  // TODO maybe not show checkbox in editing mode?
   getCheckboxCell = (checkboxId) => {
     return <CheckboxCell key={checkboxId} row={this} grid={this.getGridInstance()} />;
   };
@@ -26,19 +32,46 @@ class Row extends React.Component {
   // TODO add ?
   // TODO icons?
   getActionsCell = (actionId) => {
-    return <ActionsCell key={actionId} />;
+    return <ActionsCell key={actionId} grid={this.getGridInstance()} row={this} />;
   };
 
-  getHeaderCell = (cellData, cellId, columnSchema) => {
-    return <HeaderCell cellId={cellId} cellData={cellData} columnSchema={columnSchema} key={cellId} grid={this.getGridInstance()} />;
+  getHeaderCell = (cellData, cellId, columnSchema, templateType = '') => {
+    return (
+      <HeaderCell
+        cellId={cellId}
+        cellData={cellData}
+        columnSchema={columnSchema}
+        key={cellId}
+        templateType={templateType}
+        grid={this.getGridInstance()}
+      />
+    );
   };
 
-  getBodyCell = (cellData, cellId, columnSchema) => {
-    return <BodyCell cellId={cellId} cellData={cellData} columnSchema={columnSchema} key={cellId} grid={this.getGridInstance()} />;
+  getBodyCell = (cellData, cellId, columnSchema, templateType = '') => {
+    return (
+      <BodyCell
+        cellId={cellId}
+        cellData={cellData}
+        columnSchema={columnSchema}
+        key={cellId}
+        templateType={templateType}
+        grid={this.getGridInstance()}
+      />
+    );
   };
 
-  getFooterCell = (cellData, cellId, columnSchema) => {
-    return <FooterCell cellId={cellId} cellData={cellData} columnSchema={columnSchema} key={cellId} grid={this.getGridInstance()} />;
+  getFooterCell = (cellData, cellId, columnSchema, templateType = '') => {
+    return (
+      <FooterCell
+        cellId={cellId}
+        cellData={cellData}
+        columnSchema={columnSchema}
+        key={cellId}
+        templateType={templateType}
+        grid={this.getGridInstance()}
+      />
+    );
   };
 
   getRowType = () => {
@@ -65,6 +98,30 @@ class Row extends React.Component {
     return this.props.grid;
   };
 
+  getTemplateType = (columnSchema) => {
+    let templateType = '';
+
+    if (this.isColumnEditable(columnSchema)) {
+      templateType = this.state.templateType;
+    } else {
+      templateType = READ_TEMPLATE;
+    }
+
+    return templateType;
+  };
+
+ changeToReadMode = () => {
+    this.setState({
+      templateType: READ_TEMPLATE
+    });
+  };
+
+  changeToEditMode = () => {
+    this.setState({
+      templateType: EDIT_TEMPLATE
+    });
+  };
+
   isSelectionEnabled = () => {
     return this.getConfig().enableSelection;
   };
@@ -73,8 +130,12 @@ class Row extends React.Component {
     return this.getConfig().enableEditing;
   };
 
+  isColumnEditable = (columnSchema) => {
+    return columnSchema.isEditable;
+  };
+
   createUniqueCellId = (rowId, cellNum) => {
-    return `cell-${cellNum}-${rowId}`;
+    return `cell-${rowId}-${cellNum}`;
   };
 
   createUniqueCheckboxCellId = (rowId) => {
@@ -109,13 +170,17 @@ class Row extends React.Component {
       let cellData = row.data[i];
       let cellId = this.createUniqueCellId(rowId, i);
       let columnSchema = schema[columns[i]];
-      let cellTpl = this[getter](cellData, cellId, columnSchema);
+
+      let templateType = this.getTemplateType(columnSchema);
+
+      //let templateType = this.state.templateType;
+      let cellTpl = this[getter](cellData, cellId, columnSchema, templateType);
 
       cells.push(cellTpl);
     }
 
-    // Show action buttons column
-    if (this.isEditingEnabled()) {
+    // Show action buttons column(but not for header/footer rows)
+    if (this.isEditingEnabled() && rowType === BODY_ROW) {
       let actionCellId = this.createUniqueActionCellId(rowId);
 
       cells.push(this.getActionsCell(actionCellId));

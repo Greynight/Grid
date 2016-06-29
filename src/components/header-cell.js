@@ -15,6 +15,7 @@ class HeaderCell extends React.Component {
     return this.props.columnSchema;
   };
 
+  // TODO templates
   render() {
     let cellData = this.getData();
 

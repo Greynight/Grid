@@ -13,6 +13,9 @@ class Grid extends React.Component {
   constructor(props) {
     super(props);
 console.log("constructor");
+
+    this.editRowCache = [];
+
     this.state = {
       selectedRows: new Map(),
       lastSelected: {},
@@ -64,6 +67,18 @@ console.log("constructor");
     this.setState({
       columns: []
     });
+  };
+
+  clearEditRowCache = () => {
+    this.editRowCache.length = 0;
+  };
+
+  getEditRowCache = () => {
+    return this.editRowCache;
+  };
+
+  updateEditRowCache = (index, value) => {
+    this.editRowCache[index] = value;
   };
 
   getColumns = () => {
@@ -140,6 +155,7 @@ console.log("constructor");
 
 
   // SELECTION
+  // TODO or move to ROW?
   addToSelected(row) {
     this.setState({
       selectedRows: this.state.selectedRows.set(row.id, row)
@@ -254,6 +270,63 @@ console.log("constructor");
       }
     }
   }
+
+
+  // EDITING
+
+  saveRow = (rowToSave) => {
+    let rowToSaveId = rowToSave.id;
+    let data = this.getData();
+    let rows = data.rows;
+
+    for (let row of rows) {
+      if (rowToSaveId === row.id) {
+        let editedData = this.getEditRowCache();
+        let rowData = row.data;
+        let cellsCount = rowData.length;
+
+        for (let i = 0; i < cellsCount; i++) {
+          if (editedData[i] !== undefined) {
+            rowData[i] = editedData[i];
+          }
+        }
+
+        break;
+      }
+    }
+
+    this.clearEditRowCache();
+
+    this.setState({
+      data: Object.assign({}, data)
+    });
+  };
+
+  addRow = () => {
+    // add empty row in editing mode
+  };
+
+  // TODO redefine this method, or call some callback
+  deleteRow = (deletedRow) => {
+    let deletedRowId = deletedRow.id;
+    let data = this.getData();
+    let rows = data.rows;
+    let rowsCount = rows.length;
+
+    for (let i = 0; i < rowsCount; i++) {
+      if (rows[i].id === deletedRowId) {
+        rows.splice(i, 1);
+
+        break;
+      }
+    }
+
+    // maybe delete and add
+    // or re-generate id
+    this.setState({
+      data: Object.assign({}, data)
+    });
+  };
 
 }
 

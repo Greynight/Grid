@@ -6,6 +6,10 @@ import React from 'react';
 import Row from './row';
 import TitleRow from './title-row';
 
+const HEADER_TYPE = 'Header';
+const BODY_TYPE = 'Body';
+const FOOTER_TYPE = 'Footer';
+
 class Rows extends React.Component {
   constructor(props) {
     super(props);
@@ -53,7 +57,7 @@ class Rows extends React.Component {
       let headerRows = this.getHeaderRows();
 
       for (let headerRow of headerRows) {
-        gridRows.push(<Row type="Header" key={this.createUniqueRowKey(headerRow)} data={headerRow} {...props} />);
+        gridRows.push(<Row type={HEADER_TYPE} key={this.createUniqueRowKey(headerRow)} data={headerRow} {...props} />);
       }
     }
 
@@ -62,7 +66,7 @@ class Rows extends React.Component {
       let rows = this.getBodyRows();
 
       for (let row of rows) {
-        gridRows.push(<Row type="Body" key={this.createUniqueRowKey(row)} data={row} {...props} />);
+        gridRows.push(<Row type={BODY_TYPE} key={this.createUniqueRowKey(row)} data={row} {...props} />);
       }
     }
 
@@ -71,7 +75,7 @@ class Rows extends React.Component {
       let footerRows = this.getFooterRows();
 
       for (let footerRow of footerRows) {
-        gridRows.push(<Row type="Footer" key={this.createUniqueRowKey(footerRow)} data={footerRow} {...props} />);
+        gridRows.push(<Row type={FOOTER_TYPE} key={this.createUniqueRowKey(footerRow)} data={footerRow} {...props} />);
       }
     }
 

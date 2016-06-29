@@ -7,6 +7,7 @@ class CheckboxCell extends React.Component {
     super(props);
 
     this.grid = props.grid;
+    this.row = props.row;
   }
 
 
@@ -15,7 +16,7 @@ class CheckboxCell extends React.Component {
     //let isChecked = evt.currentTarget.checked;
     let row = this.getRow();
     //let rowId = row.id;
-
+//console.log(row);
     this.grid.toggleRowSelection(row, evt);
 
 
@@ -33,7 +34,7 @@ class CheckboxCell extends React.Component {
   };
 
   getRow = () => {
-    return this.props.row.getRowData();
+    return this.row.getRowData();
   };
 
   render() {

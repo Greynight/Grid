@@ -15,7 +15,7 @@ let config = {
   showHeader: true,
   showFooter: true,
   enableSelection: true,
-  enableEditing: false
+  enableEditing: true
 };
 
 let schema = {
@@ -26,7 +26,8 @@ let schema = {
     // some way to define templates and store them is needed
     type: 'text',
     // not required
-    isSortable: false
+    isSortable: false,
+    isEditable: false
   },
   'second': {
   id: 'second',
@@ -35,7 +36,8 @@ let schema = {
   // some way to define templates and store them is needed
     type: 'text',
   // not required
-  isSortable: false
+  isSortable: false,
+  isEditable: true
 }, 'third': {
     id: 'third',
     title: 'third',
@@ -43,7 +45,8 @@ let schema = {
     // some way to define templates and store them is needed
     type: 'text',
     // not required
-    isSortable: false
+    isSortable: false,
+    isEditable: true
   }
 };
 

@@ -7,37 +7,72 @@ class ActionsCell extends React.Component {
     super(props);
 
     this.grid = props.grid;
+    this.row = this.props.row;
+
+    this.state = {
+      isEditing: false
+    };
   }
 
+  onAddRow = () => {
+    this.state = {
+      isEditing: true
+    };
 
+    //let row = this.getRow();
 
-  onCheckboxClick = (evt) => {
-    //let isChecked = evt.currentTarget.checked;
+    return this.grid.addRow();
+  };
+
+  onEditRow = () => {
+    this.state = {
+      isEditing: true
+    };
+
+    this.row.changeToEditMode();
+  };
+
+  onSaveRow = () => {
+    let row = this.row.getRowData();
+
+    this.state = {
+      isEditing: false
+    };
+
+    this.row.changeToReadMode();
+
+    return this.grid.saveRow(row);
+  };
+
+  // or set old state on cancel?
+  onCancelSaveRow = () => {
+    this.state = {
+      isEditing: false
+    };
+
+    this.row.changeToReadMode();
+    this.grid.clearEditRowCache();
+  };
+
+  onDeleteRow = () => {
     let row = this.getRow();
-    //let rowId = row.id;
 
-    this.grid.toggleRowSelection(row, evt);
-
-
-    //console.log(row);
-    //console.log("checked");
-
-    /*row.setState({
-     row: {
-     data: [1,2,3],
-     id: row.id
-     }
-     });*/
-    //row.props.data = [1,2,3];
-    //row.forceUpdate();
+    return this.grid.deleteRow(row);
   };
 
   getRow = () => {
-    return this.props.row.getRowData();
+    return this.row.getRowData();
   };
 
   render() {
-    return <div className="wrapper"><input type="checkbox" onChange={this.onCheckboxClick} /></div>;
+    return (
+      <div className="wrapper">
+        { !this.state.isEditing ? <a href="#" onClick={this.onAddRow}>Add</a> : null}
+        { !this.state.isEditing ? <a href="#" onClick={this.onDeleteRow}>Delete</a> : null}
+        { !this.state.isEditing ? <a href="#" onClick={this.onEditRow}>Edit</a> : null}
+        { this.state.isEditing ? <a href="#" onClick={this.onSaveRow}>Save</a> : null }
+        { this.state.isEditing ? <a href="#" onClick={this.onCancelSaveRow}>Cancel</a> : null }
+      </div>);
   }
 }
 

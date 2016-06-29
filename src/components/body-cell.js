@@ -15,7 +15,7 @@ class BodyCell extends React.Component {
       data: this.props.cellData
     };
 
-    this.columnsTemplates = new Templates(this.state.data);
+    this.grid = this.props.grid;
   }
 
   getData = () => {
@@ -26,6 +26,16 @@ class BodyCell extends React.Component {
     return this.props.columnSchema;
   };
 
+  getCellId = () => {
+    return this.props.cellId;
+  };
+
+  getCellNum = (cellId) => {
+    let cellIdParts = cellId.split('-');
+
+    return cellIdParts[2];
+  };
+
   getCellTemplate = () => {
     let columnSchema = this.columnsTemplates.getTemplate([this.getSchema()['type']]);
 
@@ -33,14 +43,43 @@ class BodyCell extends React.Component {
       throw new Error("There is no such column type in templates.js");
     }
 
-    let cellTemplate = columnSchema.template;
+    let templateType = this.getTemplateType();
+    let cellTemplate = columnSchema[templateType];
 
     return cellTemplate;
   };
 
+  getTemplateType = () => {
+    return this.props.templateType;
+  };
+
+  onValueChange = (evt) => {
+    let newValue = evt.target.value;
+    let cellId = this.getCellId();
+    let cellNum = this.getCellNum(cellId);
+
+    this.grid.updateEditRowCache(cellNum, newValue);
+  };
+
   render() {
+    this.columnsTemplates = new Templates({
+      data: this.state.data,
+      onValueChange: this.onValueChange
+    });
+
+
     return this.state.template();
   }
+
+  componentWillReceiveProps = (nextProps) => {
+    let isDataChanged = this.props.cellData !== nextProps.cellData;
+
+    if (isDataChanged) {
+      this.setState({
+        data: nextProps.cellData
+      });
+    }
+  };
 }
 
 export default BodyCell;

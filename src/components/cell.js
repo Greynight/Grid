@@ -1,17 +1,16 @@
 "use strict";
 
-//import React from 'react';
+import React from 'react';
 
-//import Templates from './templates';
-import Cell from './cell';
+import Templates from './templates';
 
 // TODO extent some abstract 'cell' class
 
-class BodyCell extends Cell {
+class Cell extends React.Component {
   constructor(props) {
     super(props);
 
-    /*this.state = {
+    this.state = {
       template: this.getCellTemplate,
       data: this.props.cellData
     };
@@ -21,28 +20,28 @@ class BodyCell extends Cell {
       minWidth: this.getSchema().minWidth
     };
 
-    this.grid = this.props.grid;*/
+    this.grid = this.props.grid;
   }
 
-  /*getData = () => {
+  getData = () => {
     return this.state.data;
-  };*/
+  };
 
-  /*getSchema = () => {
+  getSchema = () => {
     return this.props.columnSchema;
-  };*/
+  };
 
-  /*getCellId = () => {
+  getCellId = () => {
     return this.props.cellId;
-  };*/
+  };
 
-  getCellNum = (cellId) => {
+  /*getCellNum = (cellId) => {
     let cellIdParts = cellId.split('-');
 
     return cellIdParts[2];
-  };
+  };*/
 
-  /*getCellTemplate = () => {
+  getCellTemplate = () => {
     let columnSchema = this.columnsTemplates.getTemplate([this.getSchema()['type']]);
 
     if (!columnSchema) {
@@ -53,21 +52,21 @@ class BodyCell extends Cell {
     let cellTemplate = columnSchema[templateType];
 
     return cellTemplate;
-  };*/
+  };
 
-  /*getTemplateType = () => {
+  getTemplateType = () => {
     return this.props.templateType;
-  };*/
+  };
 
-  onValueChange = (evt) => {
+  /*onValueChange = (evt) => {
     let newValue = evt.target.value;
     let cellId = this.getCellId();
     let cellNum = this.getCellNum(cellId);
 
     this.grid.updateEditRowCache(cellNum, newValue);
-  };
+  };*/
 
-  /*render() {
+  render() {
     this.columnsTemplates = new Templates({
       data: this.state.data,
       onValueChange: this.onValueChange,
@@ -76,9 +75,9 @@ class BodyCell extends Cell {
 
 
     return this.state.template();
-  }*/
+  }
 
-  componentWillReceiveProps = (nextProps) => {
+  /*componentWillReceiveProps = (nextProps) => {
     let isDataChanged = this.props.cellData !== nextProps.cellData;
 
     if (isDataChanged) {
@@ -86,7 +85,7 @@ class BodyCell extends Cell {
         data: nextProps.cellData
       });
     }
-  };
+  };*/
 }
 
-export default BodyCell;
+export default Cell;

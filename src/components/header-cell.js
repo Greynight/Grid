@@ -1,25 +1,10 @@
 "use strict";
 
-import React from 'react';
+import Cell from './cell';
 
-class HeaderCell extends React.Component {
+class HeaderCell extends Cell {
   constructor(props) {
     super(props);
-  }
-
-  getData = () => {
-    return this.props.cellData;
-  };
-
-  getSchema = () => {
-    return this.props.columnSchema;
-  };
-
-  // TODO templates
-  render() {
-    let cellData = this.getData();
-
-    return <div className="wrapper"><div className="text">{cellData}</div></div>;
   }
 }
 

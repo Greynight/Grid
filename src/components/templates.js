@@ -2,47 +2,64 @@
 
 import React from 'react';
 
+const MIN_WIDTH = 100;
+
 // TODO ability to add custom columns(or redefine existing)
 export default class Templates {
   constructor(options) {
     this.data = options.data;
     this.onValueChange = options.onValueChange;
+    this.styles = options.styles;
 
+    let columnStyle = {};
+
+    // calculate column width
+    if (this.styles.width) {
+      columnStyle.width = this.styles.width + 'px';
+    }
+    else if (this.styles.minWidth) {
+      columnStyle.minWidth = this.styles.minWidth + 'px';
+    } else {
+      columnStyle.minWidth = MIN_WIDTH + 'px';
+    }
+
+    //if
+// TODO move actions and checkbox template here
     this.columnTypes = {
       number: {
-        template: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
         type: 'number'
       },
       currency: {
-        template: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
         type: 'number'
       },
       percent: {
-        template: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
         type: 'number'
       },
       date: {
-        template: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
         type: 'date'
       },
       text: {
-        template: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
         writableTemplate: (
-          <div className="wrapper">
+          <div style={columnStyle} className="wrapper">
             <div className="text">
               <input type="text" defaultValue={this.data} onChange={this.onValueChange} />
             </div>

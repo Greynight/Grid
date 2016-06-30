@@ -27,18 +27,22 @@ let schema = {
     type: 'text',
     // not required
     isSortable: false,
-    isEditable: false
+    isEditable: false,
+    minWidth: 100,
+    width: null
   },
   'second': {
-  id: 'second',
-  title: 'Second',
-  // template isn't required, so 'text' will be used
-  // some way to define templates and store them is needed
-    type: 'text',
-  // not required
-  isSortable: false,
-  isEditable: true
-}, 'third': {
+    id: 'second',
+    title: 'Second',
+    // template isn't required, so 'text' will be used
+    // some way to define templates and store them is needed
+      type: 'text',
+    // not required
+    isSortable: false,
+    isEditable: true,
+    minWidth: 100,
+    width: null
+  }, 'third': {
     id: 'third',
     title: 'third',
     // template isn't required, so 'text' will be used
@@ -46,7 +50,9 @@ let schema = {
     type: 'text',
     // not required
     isSortable: false,
-    isEditable: true
+    isEditable: true,
+    minWidth: 100,
+    width: null
   }
 };
 

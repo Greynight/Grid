@@ -12,7 +12,6 @@ class Grid extends React.Component {
 
   constructor(props) {
     super(props);
-console.log("constructor");
 
     this.editRowCache = [];
 
@@ -37,11 +36,11 @@ console.log("constructor");
 
   // TODO if not empty
   render = () => {
-    console.log("render");
+    console.log("render grid");
     let {...props} = Object.assign({}, this.state, {grid: this});
 
     return (
-      <div className="container-fluid">
+      <div className="md-whiteframe-z1">
         <Rows {...props} />
       </div>);
   };
@@ -122,7 +121,8 @@ console.log("constructor");
       for (let row of rows) {
         transformedRows.push({
           data: row,
-          id: this.generateId()
+          id: this.generateId(),
+          isSelected: false
         });
       }
 
@@ -157,14 +157,19 @@ console.log("constructor");
   // SELECTION
   // TODO or move to ROW?
   addToSelected(row) {
+    let selectedRows = this.state.selectedRows.set(row.id, row);
+
     this.setState({
-      selectedRows: this.state.selectedRows.set(row.id, row)
+      selectedRows: selectedRows
     });
   }
 
   removeFromSelected(row) {
+    let selectedRows = this.state.selectedRows;
+    selectedRows.delete(row.id);
+
     this.setState({
-      selectedRows: this.state.selectedRows.delete(row.id)
+      selectedRows: selectedRows
     });
   }
 
@@ -209,8 +214,35 @@ console.log("constructor");
    * Clears collection of selected rows
    */
   clearSelectedRows() {
-    this.setState({
+    //console.log(this.state.selectedRows);
+    /*this.setState({
       selectedRows: this.state.selectedRows.clear()
+    });*/
+    this.state.selectedRows.clear();
+  }
+
+  /**
+   * Toggle all rows selection
+   */
+  toggleAll() {
+    let newSelectionState = !this.state.isAllSelected;
+
+    this.clearSelectedRows();
+
+    let data = this.getData();
+    let rows = data.rows;
+
+    for (let row of rows) {
+      row.isSelected = newSelectionState;
+
+      if (newSelectionState) {
+        this.addToSelected(row);
+      }
+    }
+
+    this.setState({
+      data: Object.assign({}, data),
+      isAllSelected: newSelectionState
     });
   }
 
@@ -219,31 +251,52 @@ console.log("constructor");
    * @param row
    * @param event
    */
-  toggleRowSelection(row, event = {}) {
-    debugger
-
-
+  toggleRowSelection(changedRow, event = {}) {
+    // TODO row.isSelected ?
     let selectedRows = this.getSelectedRows();
+    let wasSelected = selectedRows.has(changedRow.id);
 
-    if (!selectedRows.has(row.id)) {
-      this.addToSelected(row);
+    if (!wasSelected) {
+      this.addToSelected(changedRow);
     } else {
-      this.removeFromSelected(row);
+      this.removeFromSelected(changedRow);
+    }
+
+    let data = this.getData();
+    let rows = data.rows;
+
+    for (let row of rows) {
+      if (row.id === changedRow.id) {
+
+        console.log(row);
+
+        row.isSelected = !wasSelected;
+
+        this.setState({
+          data: Object.assign({}, data)
+        });
+
+        break;
+      }
     }
 
     // if click with shift button was used
     if (this.getSelectedRowsCount() > 1 && event.shiftKey) {
-      this.selectRowsRange(row);
+      this.selectRowsRange(changedRow);
     }
 
     // If all rows are selected, set checkbox "select all"
-    if (this.state.data.length === this.getSelectedRowsCount()) {
-      this.state.isAllSelected = true;
+    if (rows.length === this.getSelectedRowsCount()) {
+      this.setState({
+        isAllSelected: true
+      });
     } else {
-      this.state.isAllSelected = false;
+      this.setState({
+        isAllSelected: false
+      });
     }
 
-    this.setLastSelectedRow(row);
+    this.setLastSelectedRow(changedRow);
 
 
     //console.log(this.getSelectedRows().entries());

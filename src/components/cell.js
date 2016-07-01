@@ -67,6 +67,8 @@ class Cell extends React.Component {
   };*/
 
   render() {
+    console.log("render cell");
+
     this.columnsTemplates = new Templates({
       data: this.state.data,
       onValueChange: this.onValueChange,

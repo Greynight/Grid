@@ -8,6 +8,7 @@ class ActionsCell extends React.Component {
 
     this.grid = props.grid;
     this.row = this.props.row;
+    this.isEmptyCell = this.props.isEmptyCell;
 
     this.state = {
       isEditing: false
@@ -15,9 +16,9 @@ class ActionsCell extends React.Component {
   }
 
   onAddRow = () => {
-    this.state = {
+    /*this.state = {
       isEditing: true
-    };
+    };*/
 
     //let row = this.getRow();
 
@@ -65,14 +66,22 @@ class ActionsCell extends React.Component {
   };
 
   render() {
-    return (
-      <div className="wrapper">
-        { !this.state.isEditing ? <a href="#" onClick={this.onAddRow}>Add</a> : null}
-        { !this.state.isEditing ? <a href="#" onClick={this.onDeleteRow}>Delete</a> : null}
-        { !this.state.isEditing ? <a href="#" onClick={this.onEditRow}>Edit</a> : null}
-        { this.state.isEditing ? <a href="#" onClick={this.onSaveRow}>Save</a> : null }
-        { this.state.isEditing ? <a href="#" onClick={this.onCancelSaveRow}>Cancel</a> : null }
-      </div>);
+    let template = undefined;
+
+    if (this.isEmptyCell) {
+      template = <div></div>;
+    } else {
+      template = (
+        <div>
+          { !this.state.isEditing ? <a href="#" onClick={this.onAddRow}>Add</a> : null}
+          { !this.state.isEditing ? <a href="#" onClick={this.onDeleteRow}>Delete</a> : null}
+          { !this.state.isEditing ? <a href="#" onClick={this.onEditRow}>Edit</a> : null}
+          { this.state.isEditing ? <a href="#" onClick={this.onSaveRow}>Save</a> : null }
+          { this.state.isEditing ? <a href="#" onClick={this.onCancelSaveRow}>Cancel</a> : null }
+        </div>);
+    }
+
+    return template;
   }
 }
 

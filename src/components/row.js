@@ -24,53 +24,72 @@ class Row extends React.Component {
   }
 
   // TODO maybe not show checkbox in editing mode?
-  getCheckboxCell = (checkboxId) => {
-    return <CheckboxCell key={checkboxId} row={this} grid={this.getGridInstance()} />;
+  getCheckboxCell = (checkboxId, isEmptyCell) => {
+    return (
+      <td key={this.createColumnKey(checkboxId)}>
+        <CheckboxCell
+          key={checkboxId}
+          row={this}
+          isEmptyCell={isEmptyCell}
+          grid={this.getGridInstance()} />
+      </td>
+    );
   };
 
   // TODO configurable actions: delete, edit
   // TODO add ?
   // TODO icons?
-  getActionsCell = (actionId) => {
-    return <ActionsCell key={actionId} grid={this.getGridInstance()} row={this} />;
+  getActionsCell = (actionId, isEmptyCell) => {
+    return (
+      <td key={this.createColumnKey(actionId)}>
+        <ActionsCell
+          key={actionId}
+          isEmptyCell={isEmptyCell}
+          grid={this.getGridInstance()}
+          row={this} />
+      </td>
+    );
   };
 
   getHeaderCell = (cellData, cellId, columnSchema, templateType = '') => {
     return (
-      <HeaderCell
-        cellId={cellId}
-        cellData={cellData}
-        columnSchema={columnSchema}
-        key={cellId}
-        templateType={templateType}
-        grid={this.getGridInstance()}
-      />
+      <td key={this.createColumnKey(cellId)}>
+        <HeaderCell
+          cellId={cellId}
+          cellData={cellData}
+          columnSchema={columnSchema}
+          templateType={templateType}
+          grid={this.getGridInstance()}
+        />
+      </td>
     );
   };
 
   getBodyCell = (cellData, cellId, columnSchema, templateType = '') => {
     return (
-      <BodyCell
-        cellId={cellId}
-        cellData={cellData}
-        columnSchema={columnSchema}
-        key={cellId}
-        templateType={templateType}
-        grid={this.getGridInstance()}
-      />
+      <td key={this.createColumnKey(cellId)}>
+        <BodyCell
+          cellId={cellId}
+          cellData={cellData}
+          columnSchema={columnSchema}
+          templateType={templateType}
+          grid={this.getGridInstance()}
+        />
+      </td>
     );
   };
 
   getFooterCell = (cellData, cellId, columnSchema, templateType = '') => {
     return (
-      <FooterCell
-        cellId={cellId}
-        cellData={cellData}
-        columnSchema={columnSchema}
-        key={cellId}
-        templateType={templateType}
-        grid={this.getGridInstance()}
-      />
+      <td key={this.createColumnKey(cellId)}>
+        <FooterCell
+          cellId={cellId}
+          cellData={cellData}
+          columnSchema={columnSchema}
+          templateType={templateType}
+          grid={this.getGridInstance()}
+        />
+      </td>
     );
   };
 
@@ -110,7 +129,7 @@ class Row extends React.Component {
     return templateType;
   };
 
- changeToReadMode = () => {
+  changeToReadMode = () => {
     this.setState({
       templateType: READ_TEMPLATE
     });
@@ -146,7 +165,14 @@ class Row extends React.Component {
     return `action-${rowId}`;
   };
 
+
+
+  createColumnKey = (cellId) => {
+    return `td-${cellId}`;
+  };
+
   render() {
+    console.log("render row");
     let cells = [];
 
     let rowType = this.getRowType();
@@ -161,9 +187,10 @@ class Row extends React.Component {
 
     // show checkbox column
     if (this.isSelectionEnabled()) {
+      let isEmptyCell = rowType !== BODY_ROW;
       let checkboxId = this.createUniqueCheckboxCellId(rowId);
 
-      cells.push(this.getCheckboxCell(checkboxId));
+      cells.push(this.getCheckboxCell(checkboxId, isEmptyCell));
     }
 
     for (let i = 0; i < columnsCount; i++) {
@@ -180,16 +207,22 @@ class Row extends React.Component {
     }
 
     // Show action buttons column(but not for header/footer rows)
-    if (this.isEditingEnabled() && rowType === BODY_ROW) {
+    if (this.isEditingEnabled()) {
+      let isEmptyCell = rowType !== BODY_ROW;
       let actionCellId = this.createUniqueActionCellId(rowId);
 
-      cells.push(this.getActionsCell(actionCellId));
+      cells.push(this.getActionsCell(actionCellId, isEmptyCell));
     }
 
-    return (
+    /*return (
       <div className='table-row'>
         {cells}
       </div>
+    );*/
+    return (
+      <tr key={rowId}>
+        {cells}
+      </tr>
     );
   }
 }

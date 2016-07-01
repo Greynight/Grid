@@ -27,42 +27,40 @@ export default class Templates {
 // TODO move actions and checkbox template here
     this.columnTypes = {
       number: {
-        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle}>{this.data}</div>,
+        footerTemplate: <div style={columnStyle}>{this.data}</div>,
+        headerTemplate: <div style={columnStyle}>{this.data}</div>,
+        writableTemplate: <div style={columnStyle}>{this.data}</div>,
         type: 'number'
       },
       currency: {
-        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle}>{this.data}</div>,
+        footerTemplate: <div style={columnStyle}>{this.data}</div>,
+        headerTemplate: <div style={columnStyle}>{this.data}</div>,
+        writableTemplate: <div style={columnStyle}>{this.data}</div>,
         type: 'number'
       },
       percent: {
-        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle}>{this.data}</div>,
+        footerTemplate: <div style={columnStyle}>{this.data}</div>,
+        headerTemplate: <div style={columnStyle}>{this.data}</div>,
+        writableTemplate: <div style={columnStyle}>{this.data}</div>,
         type: 'number'
       },
       date: {
-        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        writableTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle}>{this.data}</div>,
+        footerTemplate: <div style={columnStyle}>{this.data}</div>,
+        headerTemplate: <div style={columnStyle}>{this.data}</div>,
+        writableTemplate: <div style={columnStyle}>{this.data}</div>,
         type: 'date'
       },
       text: {
-        template: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        footerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
-        headerTemplate: <div style={columnStyle} className="wrapper"><div className="text">{this.data}</div></div>,
+        template: <div style={columnStyle}>{this.data}</div>,
+        footerTemplate: <div style={columnStyle}>{this.data}</div>,
+        headerTemplate: <div style={columnStyle}>{this.data}</div>,
         writableTemplate: (
-          <div style={columnStyle} className="wrapper">
-            <div className="text">
-              <input type="text" defaultValue={this.data} onChange={this.onValueChange} />
-            </div>
+          <div style={columnStyle}>
+            <input type="text" defaultValue={this.data} onChange={this.onValueChange} />
           </div>),
         type: 'string'
       },

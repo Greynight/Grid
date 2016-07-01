@@ -5,18 +5,28 @@ import uniqueId from 'lodash/uniqueId';
 
 import CheckboxTitleCell from './checkbox-title-cell';
 import TitleCell from './title-cell';
+import ActionsCell from './actions';
 
+// TODO extend body-row and title-row from some abstract row
 class TitleRow extends React.Component {
   constructor(props) {
     super(props);
   }
 
   getCheckboxCell = () => {
-    return <CheckboxTitleCell key="selectAll" />
+    return (
+      <td key="selectAll">
+        <CheckboxTitleCell grid={this.getGridInstance()} />
+      </td>
+    );
   };
 
   getTitleCell = (columnSchema) => {
-    return <TitleCell columnSchema={columnSchema} key={this.generateUniqueKey()} />
+    return (
+      <th key={this.generateUniqueKey()}>
+        <TitleCell columnSchema={columnSchema} />
+      </th>
+    );
   };
 
   getData = () => {
@@ -43,7 +53,36 @@ class TitleRow extends React.Component {
     return uniqueId('cell');
   };
 
+  isEditingEnabled = () => {
+    return this.getConfig().enableEditing;
+  };
+
+  getActionsCell = (actionId, isEmptyCell) => {
+    return (
+      <td key={this.createColumnKey(actionId)}>
+        <ActionsCell
+          key={actionId}
+          isEmptyCell={isEmptyCell}
+          row={this} />
+      </td>
+    );
+  };
+
+  createUniqueActionCellId = (rowId) => {
+    return `action-${rowId}`;
+  };
+
+  createColumnKey = (cellId) => {
+    return `td-${cellId}`;
+  };
+
+  getGridInstance = () => {
+    return this.props.grid;
+  };
+
+
   render() {
+    console.log("render title row");
     let cells = [];
 
     let columns = this.getColumns();
@@ -63,10 +102,22 @@ class TitleRow extends React.Component {
       cells.push(cellTpl);
     }
 
-    return (
+    if (this.isEditingEnabled()) {
+      let isEmptyCell = true;
+      let actionCellId = this.createUniqueActionCellId('action-title');
+
+      cells.push(this.getActionsCell(actionCellId, isEmptyCell));
+    }
+
+    /*return (
       <div className='table-row header'>
         {cells}
       </div>
+    );*/
+    return (
+      <tr key="title-row">
+        {cells}
+      </tr>
     );
   }
 }

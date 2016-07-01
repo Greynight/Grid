@@ -47,17 +47,22 @@ class Rows extends React.Component {
   // types can be 'title', 'header', 'body', 'footer'
   // TODO generate random keys?
   render() {
-    let gridRows = [];
+    console.log("render rows");
+    //let gridRows = [];
+    let headRows = [];
+    let bodyRows = [];
+    let footRows = [];
+
     let {data, ...props} = this.props;
 
-    gridRows.push(<TitleRow key='titles' {...props} />);
+    headRows.push(<TitleRow key='titles' {...props} />);
 
     // header rows
     if (this.hasHeaderRows()) {
       let headerRows = this.getHeaderRows();
 
       for (let headerRow of headerRows) {
-        gridRows.push(<Row type={HEADER_TYPE} key={this.createUniqueRowKey(headerRow)} data={headerRow} {...props} />);
+        headRows.push(<Row type={HEADER_TYPE} key={this.createUniqueRowKey(headerRow)} data={headerRow} {...props} />);
       }
     }
 
@@ -66,7 +71,7 @@ class Rows extends React.Component {
       let rows = this.getBodyRows();
 
       for (let row of rows) {
-        gridRows.push(<Row type={BODY_TYPE} key={this.createUniqueRowKey(row)} data={row} {...props} />);
+        bodyRows.push(<Row type={BODY_TYPE} key={this.createUniqueRowKey(row)} data={row} {...props} />);
       }
     }
 
@@ -75,14 +80,28 @@ class Rows extends React.Component {
       let footerRows = this.getFooterRows();
 
       for (let footerRow of footerRows) {
-        gridRows.push(<Row type={FOOTER_TYPE} key={this.createUniqueRowKey(footerRow)} data={footerRow} {...props} />);
+        footRows.push(<Row type={FOOTER_TYPE} key={this.createUniqueRowKey(footerRow)} data={footerRow} {...props} />);
       }
     }
 
-    return (
+
+    /*return (
       <div>
         {gridRows}
-      </div>);
+      </div>);*/
+    return (
+      <table className="pl-table pl-table-striped pl-table-hovered pl-table-bordered">
+        <thead>
+          {headRows}
+        </thead>
+        <tbody>
+          {bodyRows}
+        </tbody>
+        <tfoot>
+          {footRows}
+        </tfoot>
+      </table>
+    );
   }
 }
 

@@ -6,8 +6,13 @@ class CheckboxCell extends React.Component {
   constructor(props) {
     super(props);
 
-    this.grid = props.grid;
-    this.row = props.row;
+    this.grid = this.props.grid;
+    this.row = this.props.row;
+    this.isEmptyCell = this.props.isEmptyCell;
+
+    this.state = {
+      isSelected: this.isSelected()
+    }
   }
 
 
@@ -33,12 +38,39 @@ class CheckboxCell extends React.Component {
     //row.forceUpdate();
   };
 
+  componentWillReceiveProps = (nextProps) => {
+    let row = nextProps.row;
+    let rowData = row.getRowData();
+    console.log(rowData);
+    let isDataChanged = this.state.isSelected !== rowData.isSelected;
+
+    if (isDataChanged) {
+      this.setState({
+        isSelected: rowData.isSelected
+      });
+    }
+  };
+
   getRow = () => {
     return this.row.getRowData();
   };
 
+  isSelected = () => {
+    let row = this.getRow();
+
+    return row.isSelected;
+  };
+
   render() {
-    return <div className="wrapper"><input type="checkbox" onChange={this.onCheckboxClick} /></div>;
+    let template = undefined;
+
+    if (this.isEmptyCell) {
+      template = <div></div>;
+    } else {
+      template = <div><input type="checkbox" onChange={this.onCheckboxClick} checked={this.state.isSelected} /></div>;
+    }
+
+    return template;
   }
 }
 

@@ -12,9 +12,15 @@ class TitleCell extends React.Component {
   };
 
   render() {
+    console.log("render title cell");
     let cellData = this.getSchema();
 
-    return <div className="wrapper"><div className="text">{cellData.title}</div></div>;
+    //return <div className="wrapper"><div className="text">{cellData.title}</div></div>;
+    return (
+      <div>
+        {cellData.title}
+      </div>
+    );
   }
 }
 

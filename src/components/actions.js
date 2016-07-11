@@ -1,6 +1,7 @@
 "use strict";
 
 import React from 'react';
+import Row from './row';
 
 class ActionsCell extends React.Component {
   constructor(props) {
@@ -13,6 +14,12 @@ class ActionsCell extends React.Component {
     this.state = {
       isEditing: false
     };
+
+    // TODO
+
+    if (this.row instanceof Row && this.row.getRowData().id === null) {
+      this.state.isEditing = true;
+    }
   }
 
   onAddRow = () => {

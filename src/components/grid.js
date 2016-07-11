@@ -22,6 +22,7 @@ class Grid extends React.Component {
       // columns list
       columns: this.props.columns || [],
       // columns structure
+      // TODO merge column structure with some default options
       schema: this.props.schema,
       // grid data
       data: this.applyData(this.props.data, this.props.isDataTransformed) || {},
@@ -326,7 +327,7 @@ class Grid extends React.Component {
 
 
   // EDITING
-
+// TODO add new rows to the top
   saveRow = (rowToSave) => {
     let rowToSaveId = rowToSave.id;
     let data = this.getData();
@@ -334,17 +335,24 @@ class Grid extends React.Component {
 
     for (let row of rows) {
       if (rowToSaveId === row.id) {
-        let editedData = this.getEditRowCache();
-        let rowData = row.data;
-        let cellsCount = rowData.length;
+        // new row
+        if (!rowToSaveId) {
+          row.id = this.generateId();
+          row.data = this.getEditRowCache().slice(0);
+        // if existing row
+        } else {
+          let editedData = this.getEditRowCache();
+          let rowData = row.data;
+          let cellsCount = rowData.length;
 
-        for (let i = 0; i < cellsCount; i++) {
-          if (editedData[i] !== undefined) {
-            rowData[i] = editedData[i];
+          for (let i = 0; i < cellsCount; i++) {
+            if (editedData[i] !== undefined) {
+              rowData[i] = editedData[i];
+            }
           }
-        }
 
-        break;
+          break;
+        }
       }
     }
 
@@ -356,6 +364,16 @@ class Grid extends React.Component {
   };
 
   addRow = () => {
+    let data = this.getData();
+    data.rows.push({
+      id: null,
+      data: [],
+      isSelected: false
+    });
+
+    this.setState({
+      data: Object.assign({}, data)
+    });
     // add empty row in editing mode
   };
 

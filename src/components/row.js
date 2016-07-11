@@ -21,6 +21,10 @@ class Row extends React.Component {
       row: this.props.data,
       templateType: READ_TEMPLATE
     };
+
+    if (this.state.row.id === null) {
+      this.state.templateType = EDIT_TEMPLATE;
+    }
   }
 
   // TODO maybe not show checkbox in editing mode?
@@ -120,7 +124,7 @@ class Row extends React.Component {
   getTemplateType = (columnSchema) => {
     let templateType = '';
 
-    if (this.isColumnEditable(columnSchema)) {
+    if (this.isColumnEditable(columnSchema) || this.getRowData().id === null) {
       templateType = this.state.templateType;
     } else {
       templateType = READ_TEMPLATE;

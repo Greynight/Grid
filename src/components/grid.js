@@ -14,6 +14,7 @@ class Grid extends React.Component {
     super(props);
 
     this.editRowCache = [];
+    this.sortCycle = ['', 'asc', 'desc'];
 
     this.state = {
       selectedRows: new Map(),
@@ -27,7 +28,19 @@ class Grid extends React.Component {
       // grid data
       data: this.applyData(this.props.data, this.props.isDataTransformed) || {},
       // grid config
-      config: this.props.config
+      config: this.props.config,
+      // pagination
+      pagination: {
+
+      },
+      // TODO ability to set sortOrderCycle
+      // TODO ability to set sorting function
+      sorting: {
+        orderBy: this.getDefaultOrderBy(this.props.columns),
+        orderDir: this.getDefaultOrderDir(),
+        cycle: ['', 'asc', 'desc']
+      },
+      actions: this.getActions()
     };
 
     if (!this.props.config || !this.props.schema) {
@@ -35,10 +48,124 @@ class Grid extends React.Component {
     }
   }
 
+  /**
+   * ---------- SORTING ----------
+   */
+
+  isGridSortable = () => {
+    return this.state.config.enableSorting;
+  };
+
+  getDefaultOrderBy = (columns) => {
+    return columns && columns[0];
+  };
+
+  getDefaultOrderDir = () => {
+    return this.sortCycle[0];
+  };
+
+  setSortingColumn = (columnId) => {
+    let newSortingState = Object.assign({}, this.state.sorting, {orderBy: columnId});
+
+    this.setState({
+      sorting: newSortingState
+    });
+  };
+
+  getSortingColumn = () => {
+    return this.state.sorting.orderBy;
+  };
+
+  setSortingDirection = (direction) => {
+    let newSortingState = Object.assign({}, this.state.sorting, {orderDir: direction});
+
+    this.setState({
+      sorting: newSortingState
+    });
+  };
+
+  getSortingDir = () => {
+    return this.state.sorting.orderDir;
+  };
+
+  getSortingCycle = () => {
+    return this.state.sorting.cycle;
+  };
+
+  setSortingCycle = (sortingCycle) => {
+    this.setState({
+      sorting: {
+        cycle: sortingCycle,
+        orderBy: this.getSortingColumn(),
+        orderDir: this.getSortingDir()
+      }
+    });
+  };
+
+  getNextSortingDir = () => {
+    let sortingCycle = this.getSortingCycle();
+    let sortDirIndex = sortingCycle.indexOf(this.getSortingDir());
+
+    if (sortDirIndex === -1) {
+       throw new Error('Try to sort by unknown "orderDir"');
+    }
+
+    sortDirIndex = (sortDirIndex + 1) % sortingCycle.length;
+
+    return sortingCycle[sortDirIndex];
+  };
+
+  // internal and external sorting
+  // TODO save not sorted state?
+  sortData = (orderBy, orderDir) => {
+    if (this.getConfig().internalSorting) {
+      // sort data using default or user-defined function
+      this.internalSort(orderBy, orderDir);
+    } else if(this.getConfig().externalSorting) {
+      // call user-defined callback
+      this.onSortingChange(orderBy, orderDir);
+    } else {
+      throw new Error("You must enable External or Internal sorting");
+    }
+  };
+
+  internalSort = (orderBy, orderDir) => {
+    let sortColumn = orderBy || this.getSortingColumn();
+    let sortDir = orderDir || this.getSortingDir();
+    let sortColumnIndex = this.getColumns().indexOf(sortColumn);
+    let data = this.getData();
+
+    if (sortColumnIndex !== -1) {
+      let dataSectionsNames = Object.keys(data);
+      //let sortingDirFunc = this[`${sortDir}Sorting`];
+
+      for (let dataSectionName of dataSectionsNames) {
+        let dataSection = data[dataSectionName];
+
+        dataSection.sort(this.sortingFunc(sortColumnIndex, sortDir));
+      }
+    }
+  };
+
+  sortingFunc = (sortColumnIndex, sortDir) => {
+    let sortOrder = sortDir === 'asc' ? 1 : -1;
+
+    return function(a, b) {
+      return sortOrder * (a.data[sortColumnIndex] - b.data[sortColumnIndex]);
+    };
+  };
+
+
+
+
+
+
   // TODO if not empty
+  // TODO default sort order and column
+  // TODO set column width
   render = () => {
-    console.log("render grid");
-    let {...props} = Object.assign({}, this.state, {grid: this});
+    // TODO maybe not state, but some fixed props list
+    let {...props} = Object.assign({}, this.state/*, {grid: this}*/);
 
     return (
       <div className="md-whiteframe-z1">
@@ -46,8 +173,13 @@ class Grid extends React.Component {
       </div>);
   };
 
+
+
+
+
+
+  // TODO  separate public api somehow
   renderGrid = () => {
-    console.log("renderGrid");
     let {...props} = Object.assign({}, this.state, {isDataTransformed: true});
 
     ReactDOM.render(<Grid {...props} />, document.getElementById(this.getConfig().parentId));
@@ -152,11 +284,10 @@ class Grid extends React.Component {
   };
 
 
+  /**
+   * ---------- SELECTION ----------
+   */
 
-
-
-  // SELECTION
-  // TODO or move to ROW?
   addToSelected(row) {
     let selectedRows = this.state.selectedRows.set(row.id, row);
 
@@ -298,9 +429,6 @@ class Grid extends React.Component {
     }
 
     this.setLastSelectedRow(changedRow);
-
-
-    //console.log(this.getSelectedRows().entries());
   }
 
   /**
@@ -326,7 +454,11 @@ class Grid extends React.Component {
   }
 
 
-  // EDITING
+  /**
+   * ---------- EDITING ----------
+   */
+
+
 // TODO add new rows to the top
   saveRow = (rowToSave) => {
     let rowToSaveId = rowToSave.id;
@@ -398,6 +530,84 @@ class Grid extends React.Component {
       data: Object.assign({}, data)
     });
   };
+
+  getActions = () => {
+    return {
+      'onSortClick': this.onSortClick,
+      'onCheckboxAllClick': this.onCheckboxAllClick,
+      'onCheckboxClick': this.onCheckboxClick,
+      'onCellChange': this.onCellChange,
+      'onDeleteRow': this.onDeleteRow,
+      'onEditRow': this.onEditRow,
+      'onSaveRow': this.onSaveRow,
+      'onAddRow': this.onAddRow,
+      'onCancelSaveRow': this.onCancelSaveRow
+    };
+  };
+
+  // TODO public over-writable methods
+  // pass as actions
+
+
+  onSortingChange = (orderBy, orderDir) => {};
+
+
+  /**
+   * ---------- ACTIONS ----------
+   */
+  onSortClick = (columnId) => {
+    if (this.isGridSortable()) {
+      let orderDir = null;
+      let orderBy = null;
+
+      if (this.getSortingColumn() !== columnId) {
+        orderBy = columnId;
+        orderDir = this.getDefaultOrderDir();
+
+        this.setSortingColumn(orderBy);
+      } else {
+        orderDir = this.getNextSortingDir();
+      }
+
+      this.setSortingDirection(orderDir);
+      this.sortData(orderBy, orderDir);
+    }
+  };
+
+  onCheckboxAllClick = () => {
+    this.toggleAll();
+  };
+
+  onCheckboxClick = (rowData, event) => {
+    this.toggleRowSelection(rowData, event);
+  };
+
+  onCellChange = (cellNum, newValue) => {
+    this.updateEditRowCache(cellNum, newValue);
+  };
+
+  onDeleteRow = (row) => {
+    this.deleteRow(row);
+  };
+
+  onEditRow = () => {};
+
+  onSaveRow = (row) => {
+    this.saveRow(row)
+  };
+
+  onAddRow = () => {
+    this.addRow();
+  };
+
+  onCancelSaveRow = () => {
+    this.clearEditRowCache();
+  };
+
+
+
+
+
 
 }
 

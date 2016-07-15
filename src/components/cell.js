@@ -4,48 +4,40 @@ import React from 'react';
 
 import Templates from './templates';
 
-// TODO extent some abstract 'cell' class
-
 class Cell extends React.Component {
   constructor(props) {
     super(props);
 
+    this.READ_TEMPLATE = 'template';
+
     this.state = {
-      template: this.getCellTemplate,
-      data: this.props.cellData
+      template: this.getCellTemplate
     };
 
     this.styles = {
       width: this.getSchema().width,
       minWidth: this.getSchema().minWidth
     };
-
-    this.grid = this.props.grid;
   }
 
-  getData = () => {
-    return this.state.data;
+  getCellData = () => {
+    return this.props.cellData;
   };
 
   getSchema = () => {
-    return this.props.columnSchema;
+    return this.props.columnSchema || {};
   };
 
-  getCellId = () => {
-    return this.props.cellId;
+  getColumnId = () => {
+    return this.getSchema().id;
   };
-
-  /*getCellNum = (cellId) => {
-    let cellIdParts = cellId.split('-');
-
-    return cellIdParts[2];
-  };*/
 
   getCellTemplate = () => {
-    let columnSchema = this.columnsTemplates.getTemplate([this.getSchema()['type']]);
+    let type = this.getSchema()['type'];
+    let columnSchema = this.columnsTemplates.getTemplate([type]);
 
     if (!columnSchema) {
-      throw new Error("There is no such column type in templates.js");
+      throw new Error(`There is no such column type like ${type} in templates.js`);
     }
 
     let templateType = this.getTemplateType();
@@ -55,39 +47,17 @@ class Cell extends React.Component {
   };
 
   getTemplateType = () => {
-    return this.props.templateType;
+    return this.props.templateType || this.READ_TEMPLATE;
   };
 
-  /*onValueChange = (evt) => {
-    let newValue = evt.target.value;
-    let cellId = this.getCellId();
-    let cellNum = this.getCellNum(cellId);
-
-    this.grid.updateEditRowCache(cellNum, newValue);
-  };*/
-
   render() {
-    console.log("render cell");
-
     this.columnsTemplates = new Templates({
-      data: this.state.data,
-      onValueChange: this.onValueChange,
+      data: this.getCellData(),
       styles: this.styles
     });
 
-
     return this.state.template();
   }
-
-  /*componentWillReceiveProps = (nextProps) => {
-    let isDataChanged = this.props.cellData !== nextProps.cellData;
-
-    if (isDataChanged) {
-      this.setState({
-        data: nextProps.cellData
-      });
-    }
-  };*/
 }
 
 export default Cell;

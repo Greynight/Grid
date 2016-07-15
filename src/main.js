@@ -8,14 +8,24 @@
 // Libraries
 //import React from 'react';
 
+// TODO overridable pagination template
+// TODO fixed columns
+
 import Grid from './components/grid';
 
+// TODO set grid width, height
 let config = {
   parentId: 'grid',
   showHeader: true,
   showFooter: true,
   enableSelection: true,
-  enableEditing: true
+  enableEditing: true,
+  enablePagination: false,
+  enableSorting: true,
+  internalSorting: true,
+  externalSorting: false,
+  internalPaging: false,
+  externalPaging: false
 };
 
 let schema = {
@@ -26,7 +36,7 @@ let schema = {
     // some way to define templates and store them is needed
     type: 'text',
     // not required
-    isSortable: false,
+    isSortable: true,
     isEditable: false,
     minWidth: 100,
     width: null
@@ -59,7 +69,7 @@ let schema = {
 let columns = ['id', 'second', 'third'];
 
 let headerRows = [['11', 'header', 'row'], ['1122', 'header2', 'row']];
-let rows = [['1', 'qqq', 'rrr'], ['2', 'wwww', 'ttt'], ['3', 'rrrr', 'yyy'], ['31', 'rrrr', 'yyy'], ['32', 'rrrr', 'yyy'],
+let rows = [['3', 'qqq', 'rrr'], ['1', 'wwww', 'ttt'], ['2', 'rrrr', 'yyy'], ['31', 'rrrr', 'yyy'], ['32', 'rrrr', 'yyy'],
   ['33', 'rrrr', 'yyy'], ['34', 'rrrr', 'yyy'], ['35', 'rrrr', 'yyy'], ['36', 'rrrr', 'yyy'], ['37', 'rrrr', 'yyy'],
   ['38', 'rrrr', 'yyy'], ['39', 'rrrr', 'yyy'], ['30', 'rrrr', 'yyy'], ['311', 'rrrr', 'yyy'], ['322', 'rrrr', 'yyy'],
   ['333', 'rrrr', 'yyy'], ['344', 'rrrr', 'yyy'], ['355', 'rrrr', 'yyy'], ['366', 'rrrr', 'yyy'], ['377', 'rrrr', 'yyy']];
@@ -67,9 +77,6 @@ let rows = [['1', 'qqq', 'rrr'], ['2', 'wwww', 'ttt'], ['3', 'rrrr', 'yyy'], ['3
 let footerRows = [['222', 'footer', 'row'], ['22233', 'footer2', 'row2']];
 
 let data = {headerRows, rows, footerRows};
-
-/*grid.setColumns(columns);
-grid.setData({headerRows, rows, footerRows});*/
 
 let grid = new Grid({config, schema, columns, data});
 

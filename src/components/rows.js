@@ -1,68 +1,108 @@
 "use strict";
 
 import React from 'react';
-//import uniqueId from 'lodash/uniqueId';
 
-import Row from './row';
-import TitleRow from './title-row';
-
-const HEADER_TYPE = 'Header';
-const BODY_TYPE = 'Body';
-const FOOTER_TYPE = 'Footer';
+import BodyRow from './row-body';
+import TitleRow from './row-title';
+import HeaderRow from './row-header';
+import FooterRow from './row-footer';
 
 class Rows extends React.Component {
   constructor(props) {
     super(props);
   }
 
+  getOrderDir = () => {
+    return this.props.sorting.orderDir;
+  };
+
+  getData = () => {
+    return this.props.data;
+  };
+
+  getIsAllSelected = () => {
+    return this.props.isAllSelected;
+  };
+
+  getColumns = () => {
+    return this.props.columns;
+  };
+
+  getSchema = () => {
+    return this.props.schema;
+  };
+
+  getConfig = () => {
+    return this.props.config;
+  };
+
+  getActions = () => {
+    return this.props.actions;
+  };
+
+
   hasHeaderRows = () => {
-    return !!this.props.data.headerRows.length;
+    return !!this.getData().headerRows.length;
   };
 
   hasBodyRows = () => {
-    return !!this.props.data.rows.length;
+    return !!this.getData().rows.length;
   };
 
   hasFooterRows = () => {
-    return !!this.props.data.footerRows.length;
+    return !!this.getData().footerRows.length;
   };
 
   getHeaderRows = () => {
-    return this.props.data.headerRows;
+    return this.getData().headerRows;
   };
 
   getBodyRows = () => {
-    //console.log(this.props.data.rows);
-    return this.props.data.rows;
+    return this.getData().rows;
   };
 
   getFooterRows = () => {
-    return this.props.data.footerRows;
+    return this.getData().footerRows;
   };
 
   createUniqueRowKey = (row) => {
     return `row-${row.id}`;
   };
 
-  // types can be 'title', 'header', 'body', 'footer'
-  // TODO generate random keys?
   render() {
-    console.log("render rows");
-    //let gridRows = [];
     let headRows = [];
     let bodyRows = [];
     let footRows = [];
 
-    let {data, ...props} = this.props;
+    //let {data, ...props} = this.props;
 
-    headRows.push(<TitleRow key='titles' {...props} />);
+    headRows.push(
+      <TitleRow
+        key = 'Title'
+        //{...props}
+        orderDir = {this.getOrderDir()}
+        isAllSelected = {this.getIsAllSelected()}
+        columns = {this.getColumns()}
+        schema = {this.getSchema()}
+        config = {this.getConfig()}
+        actions = {this.getActions()}
+      />
+    );
 
     // header rows
     if (this.hasHeaderRows()) {
       let headerRows = this.getHeaderRows();
 
       for (let headerRow of headerRows) {
-        headRows.push(<Row type={HEADER_TYPE} key={this.createUniqueRowKey(headerRow)} data={headerRow} {...props} />);
+        headRows.push(
+          <HeaderRow
+            key = {this.createUniqueRowKey(headerRow)}
+            data = {headerRow}
+            columns = {this.getColumns()}
+            schema = {this.getSchema()}
+            config = {this.getConfig()}
+          />
+        );
       }
     }
 
@@ -70,8 +110,16 @@ class Rows extends React.Component {
     if (this.hasBodyRows()) {
       let rows = this.getBodyRows();
 
-      for (let row of rows) {
-        bodyRows.push(<Row type={BODY_TYPE} key={this.createUniqueRowKey(row)} data={row} {...props} />);
+      for (let bodyRow of rows) {
+        bodyRows.push(
+          <BodyRow
+            key = {this.createUniqueRowKey(bodyRow)}
+            data = {bodyRow}
+            columns = {this.getColumns()}
+            schema = {this.getSchema()}
+            config = {this.getConfig()}
+            actions = {this.getActions()}
+          />);
       }
     }
 
@@ -80,15 +128,17 @@ class Rows extends React.Component {
       let footerRows = this.getFooterRows();
 
       for (let footerRow of footerRows) {
-        footRows.push(<Row type={FOOTER_TYPE} key={this.createUniqueRowKey(footerRow)} data={footerRow} {...props} />);
+        footRows.push(
+          <FooterRow
+            key = {this.createUniqueRowKey(footerRow)}
+            data = {footerRow}
+            columns = {this.getColumns()}
+            schema = {this.getSchema()}
+            config = {this.getConfig()}
+          />);
       }
     }
 
-
-    /*return (
-      <div>
-        {gridRows}
-      </div>);*/
     return (
       <table className="pl-table pl-table-striped pl-table-hovered pl-table-bordered">
         <thead>

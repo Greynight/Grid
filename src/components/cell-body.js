@@ -1,12 +1,10 @@
-"use strict";
-
 import Cell from './cell';
 import Templates from './templates';
 
 class BodyCell extends Cell {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
-  }
+  }*/
 
   getCellId = () => {
     return this.props.cellId;

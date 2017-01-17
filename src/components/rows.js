@@ -1,5 +1,3 @@
-"use strict";
-
 import React from 'react';
 
 import BodyRow from './row-body';
@@ -8,9 +6,9 @@ import HeaderRow from './row-header';
 import FooterRow from './row-footer';
 
 class Rows extends React.Component {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
-  }
+  }*/
 
   getOrderDir = () => {
     return this.props.sorting.orderDir;
@@ -39,7 +37,6 @@ class Rows extends React.Component {
   getActions = () => {
     return this.props.actions;
   };
-
 
   hasHeaderRows = () => {
     return !!this.getData().headerRows.length;
@@ -74,33 +71,31 @@ class Rows extends React.Component {
     let bodyRows = [];
     let footRows = [];
 
-    //let {data, ...props} = this.props;
-
     headRows.push(
       <TitleRow
-        key = 'Title'
+        key='Title'
         //{...props}
-        orderDir = {this.getOrderDir()}
-        isAllSelected = {this.getIsAllSelected()}
-        columns = {this.getColumns()}
-        schema = {this.getSchema()}
-        config = {this.getConfig()}
-        actions = {this.getActions()}
+        orderDir={this.getOrderDir()}
+        isAllSelected={this.getIsAllSelected()}
+        columns={this.getColumns()}
+        schema={this.getSchema()}
+        config={this.getConfig()}
+        actions={this.getActions()}
       />
     );
 
     // header rows
-    if (this.hasHeaderRows()) {
+    if (this.hasHeaderRows() && this.getConfig().showHeader) {
       let headerRows = this.getHeaderRows();
 
       for (let headerRow of headerRows) {
         headRows.push(
           <HeaderRow
-            key = {this.createUniqueRowKey(headerRow)}
-            data = {headerRow}
-            columns = {this.getColumns()}
-            schema = {this.getSchema()}
-            config = {this.getConfig()}
+            key={this.createUniqueRowKey(headerRow)}
+            data={headerRow}
+            columns={this.getColumns()}
+            schema={this.getSchema()}
+            config={this.getConfig()}
           />
         );
       }
@@ -113,28 +108,28 @@ class Rows extends React.Component {
       for (let bodyRow of rows) {
         bodyRows.push(
           <BodyRow
-            key = {this.createUniqueRowKey(bodyRow)}
-            data = {bodyRow}
-            columns = {this.getColumns()}
-            schema = {this.getSchema()}
-            config = {this.getConfig()}
-            actions = {this.getActions()}
+            key={this.createUniqueRowKey(bodyRow)}
+            data={bodyRow}
+            columns={this.getColumns()}
+            schema={this.getSchema()}
+            config={this.getConfig()}
+            actions={this.getActions()}
           />);
       }
     }
 
     // footer rows
-    if (this.hasFooterRows()) {
+    if (this.hasFooterRows() && this.getConfig().showFooter) {
       let footerRows = this.getFooterRows();
 
       for (let footerRow of footerRows) {
         footRows.push(
           <FooterRow
-            key = {this.createUniqueRowKey(footerRow)}
-            data = {footerRow}
-            columns = {this.getColumns()}
-            schema = {this.getSchema()}
-            config = {this.getConfig()}
+            key={this.createUniqueRowKey(footerRow)}
+            data={footerRow}
+            columns={this.getColumns()}
+            schema={this.getSchema()}
+            config={this.getConfig()}
           />);
       }
     }

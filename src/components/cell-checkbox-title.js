@@ -1,13 +1,11 @@
-"use strict";
-
 import React from 'react';
 
 import Cell from './cell';
 
 class CheckboxTitleCell extends Cell {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
-  }
+  }*/
 
   getIsAllSelected = () => {
     return this.props.isAllSelected;

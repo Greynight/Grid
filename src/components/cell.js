@@ -1,5 +1,3 @@
-"use strict";
-
 import React from 'react';
 
 import Templates from './templates';
@@ -41,9 +39,8 @@ class Cell extends React.Component {
     }
 
     let templateType = this.getTemplateType();
-    let cellTemplate = columnSchema[templateType];
 
-    return cellTemplate;
+    return columnSchema[templateType];
   };
 
   getTemplateType = () => {

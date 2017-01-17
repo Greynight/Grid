@@ -1,5 +1,3 @@
-"use strict";
-
 import React from 'react';
 
 import Row from './row';
@@ -20,11 +18,11 @@ class BodyRow extends Row {
 
   getCheckboxCell = (checkboxId) => {
     return (
-      <td key = {this.createColumnKey(checkboxId)}>
+      <td key={this.createColumnKey(checkboxId)}>
         <CheckboxCell
-          key = {checkboxId}
-          rowData = {this.getRowData()}
-          onCheckboxClick = {this.getActions().onCheckboxClick}
+          key={checkboxId}
+          rowData={this.getRowData()}
+          onCheckboxClick={this.getActions().onCheckboxClick}
         />
       </td>
     );
@@ -34,20 +32,20 @@ class BodyRow extends Row {
   // TODO icons?
   getActionsCell = (actionId) => {
     return (
-      <td key = {this.createColumnKey(actionId)}>
+      <td key={this.createColumnKey(actionId)}>
         <ActionsCell
-          key = {actionId}
-          rowData = {this.getRowData()}
-          changeToEditMode = {this.changeToEditMode}
-          changeToReadMode = {this.changeToReadMode}
-          onCancelSaveRow = {this.getActions().onCancelSaveRow}
-          onAddRow = {this.getActions().onAddRow}
-          onSaveRow = {this.getActions().onSaveRow}
-          onDeleteRow = {this.getActions().onDeleteRow}
-          onCellChange = {this.getActions().onCellChange}
-          onCheckboxClick = {this.getActions().onCheckboxClick}
-          onCheckboxAllClick = {this.getActions().onCheckboxAllClick}
-          onSortClick = {this.getActions().onSortClick}
+          key={actionId}
+          rowData={this.getRowData()}
+          changeToEditMode={this.changeToEditMode}
+          changeToReadMode={this.changeToReadMode}
+          onCancelSaveRow={this.getActions().onCancelSaveRow}
+          onAddRow={this.getActions().onAddRow}
+          onSaveRow={this.getActions().onSaveRow}
+          onDeleteRow={this.getActions().onDeleteRow}
+          onCellChange={this.getActions().onCellChange}
+          onCheckboxClick={this.getActions().onCheckboxClick}
+          onCheckboxAllClick={this.getActions().onCheckboxAllClick}
+          onSortClick={this.getActions().onSortClick}
         />
       </td>
     );
@@ -55,13 +53,13 @@ class BodyRow extends Row {
 
   getBodyCell = (cellData, cellId, columnSchema, templateType = '') => {
     return (
-      <td key = {this.createColumnKey(cellId)}>
+      <td key={this.createColumnKey(cellId)}>
         <BodyCell
-          cellId = {cellId}
-          cellData = {cellData}
-          columnSchema = {columnSchema}
-          templateType = {templateType}
-          onCellChange = {this.getActions().onCellChange}
+          cellId={cellId}
+          cellData={cellData}
+          columnSchema={columnSchema}
+          templateType={templateType}
+          onCellChange={this.getActions().onCellChange}
         />
       </td>
     );
@@ -97,7 +95,7 @@ class BodyRow extends Row {
     }
 
     return (
-      <tr key = {rowId}>
+      <tr key={rowId}>
         {cells}
       </tr>
     );

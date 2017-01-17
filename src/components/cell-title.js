@@ -1,13 +1,11 @@
-"use strict";
-
 import React from 'react';
 
 import Cell from './cell';
 
 class TitleCell extends Cell {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
-  }
+  }*/
 
   getOrderDir = () => {
     return this.props.orderDir;
@@ -34,7 +32,7 @@ class TitleCell extends Cell {
     }
 
     return (
-      <div className = {className} onClick = {this.onHeaderClick}>
+      <div className={className} onClick={this.onHeaderClick}>
         {cellData.title}
       </div>
     );

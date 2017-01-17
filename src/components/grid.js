@@ -1,20 +1,42 @@
-"use strict";
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import uniqueId from 'lodash/uniqueId';
 
 import Rows from './rows';
+import Pagination from './pagination';
 
+const defaultConfig = {
+  parentId: 'grid',
+  showHeader: false,
+  showFooter: false,
+  enableSelection: true,
+  enableEditing: true,
+  enablePagination: false,
+  enableSorting: false,
+  internalSorting: false,
+  externalSorting: false,
+  sortCycle: ['', 'asc', 'desc'],
+  internalPaging: false,
+  externalPaging: false,
+  paginationTemplate: false,
+  paginationRowsNumList: [25, 50, 100, 200]
+};
+
+const defaultSchemaItem = {
+  isSortable: false,
+  isEditable: false,
+  minWidth: 100,
+  width: null
+};
 
 class Grid extends React.Component {
-
   constructor(props) {
     super(props);
 
+    let config = Object.assign({}, this.props.config, defaultConfig);
+
     this.editRowCache = [];
-    this.sortCycle = ['', 'asc', 'desc'];
 
     this.state = {
       selectedRows: new Map(),
@@ -23,28 +45,35 @@ class Grid extends React.Component {
       // columns list
       columns: this.props.columns || [],
       // columns structure
-      // TODO merge column structure with some default options
-      schema: this.props.schema,
+      schema: this.setSchema(this.props.schema),
       // grid data
-      data: this.applyData(this.props.data, this.props.isDataTransformed) || {},
+      data: this.applyData(this.props.data) || {},
       // grid config
-      config: this.props.config,
-      // pagination
+      config: config,
+      // pagination TODO
       pagination: {
-
+        template: config.paginationTemplate,
+        paginationRowsNumList: config.paginationRowsNumList,
+        rowsPerPage:this.getDefaultRowsPerPage(config),
+        rowsCount: null,
+        rowsOffset: null
       },
       // TODO ability to set sortOrderCycle
       // TODO ability to set sorting function
       sorting: {
         orderBy: this.getDefaultOrderBy(this.props.columns),
-        orderDir: this.getDefaultOrderDir(),
+        orderDir: this.getDefaultOrderDir(config),
         cycle: ['', 'asc', 'desc']
       },
       actions: this.getActions()
     };
 
-    if (!this.props.config || !this.props.schema) {
-      throw new Error("Config or schema weren't defined");
+    if (!this.props.config) {
+      throw new Error("Config wasn't defined");
+    }
+
+    if (!this.props.schema) {
+      throw new Error("Schema wasn't defined");
     }
   }
 
@@ -60,8 +89,8 @@ class Grid extends React.Component {
     return columns && columns[0];
   };
 
-  getDefaultOrderDir = () => {
-    return this.sortCycle[0];
+  getDefaultOrderDir = (config) => {
+    return config.sortCycle[0];
   };
 
   setSortingColumn = (columnId) => {
@@ -155,21 +184,44 @@ class Grid extends React.Component {
     };
   };
 
+  /**
+   *  ---------- PAGINATION ----------
+   */
+
+  getDefaultRowsPerPage = (config) => {
+    return config.rowsPerPage;
+  };
+
+  /*paginationRowsNumList = (num) => {
+    let newState = Object.assign(this.state, {pagination: {}});
+    this.setState();
+  };
+*/
 
 
-
-
-
-  // TODO if not empty
   // TODO default sort order and column
   // TODO set column width
   render = () => {
-    // TODO maybe not state, but some fixed props list
     let {...props} = Object.assign({}, this.state/*, {grid: this}*/);
+    let config = this.getConfig();
+    let isPaginationEnabled = false;
+
+    if (config.enablePagination) {
+      if (config.internalPaging && config.externalPaging) {
+        throw new Error('You must choose only one pagination type.');
+      }
+
+      if (!config.internalPaging && !config.externalPaging) {
+        throw new Error('You must choose at least one pagination type.');
+      }
+
+      isPaginationEnabled = true;
+    }
 
     return (
       <div className="md-whiteframe-z1">
         <Rows {...props} />
+        { isPaginationEnabled ? <Pagination data={this.state.pagination} /> : null}
       </div>);
   };
 
@@ -180,7 +232,7 @@ class Grid extends React.Component {
 
   // TODO  separate public api somehow
   renderGrid = () => {
-    let {...props} = Object.assign({}, this.state, {isDataTransformed: true});
+    let {...props} = Object.assign({}, this.state);
 
     ReactDOM.render(<Grid {...props} />, document.getElementById(this.getConfig().parentId));
   };
@@ -217,14 +269,18 @@ class Grid extends React.Component {
     return this.state.columns;
   };
 
-  applyData = (data = {}, isDataTransformed) => {
-    let processedData = {};
+  setSchema = (schema = {}) => {
+    let schemaItems = Object.values(schema);
 
-    if (isDataTransformed) {
-      processedData = Object.assign({}, data);
-    } else {
-      processedData = Object.assign({}, this.transformData(this.props.data));
+    for (let schemaItem of schemaItems) {
+      schemaItem = Object.assign(defaultSchemaItem, schemaItem);
     }
+
+    return schema;
+  };
+
+  applyData = (data = {}) => {
+    let processedData = Object.assign({}, this.transformData(this.props.data));
 
     return processedData;
   };
@@ -241,28 +297,34 @@ class Grid extends React.Component {
   };
 
   transformData = (data = {}) => {
-    //console.log(data);
-    // TODO don't apply to already transformed data
     let transformedData = {};
 
-    let dataKeys = Object.keys(data);
+    if (this.isDataTransformed(data)) {
+      transformedData = data;
+    } else {
+      let dataKeys = Object.keys(data);
 
-    for (let rowsSection of dataKeys) {
-      let transformedRows = [];
-      let rows = data[rowsSection];
+      for (let rowsSection of dataKeys) {
+        let transformedRows = [];
+        let rows = data[rowsSection];
 
-      for (let row of rows) {
-        transformedRows.push({
-          data: row,
-          id: this.generateId(),
-          isSelected: false
-        });
+        for (let row of rows) {
+          transformedRows.push({
+            data: row,
+            id: this.generateId(),
+            isSelected: false
+          });
+        }
+
+        transformedData[rowsSection] = transformedRows;
       }
-
-      transformedData[rowsSection] = transformedRows;
     }
 
     return transformedData;
+  };
+
+  isDataTransformed = (data) => {
+    return !Array.isArray(data.rows[0]);
   };
 
   generateId = () => {
@@ -380,11 +442,10 @@ class Grid extends React.Component {
 
   /**
    * Called on checkbox click, toggles rows between selected and not selected state
-   * @param row
+   * @param changedRow
    * @param event
    */
   toggleRowSelection(changedRow, event = {}) {
-    // TODO row.isSelected ?
     let selectedRows = this.getSelectedRows();
     let wasSelected = selectedRows.has(changedRow.id);
 
@@ -457,9 +518,6 @@ class Grid extends React.Component {
   /**
    * ---------- EDITING ----------
    */
-
-
-// TODO add new rows to the top
   saveRow = (rowToSave) => {
     let rowToSaveId = rowToSave.id;
     let data = this.getData();
@@ -497,7 +555,8 @@ class Grid extends React.Component {
 
   addRow = () => {
     let data = this.getData();
-    data.rows.push({
+
+    data.rows.unshift({
       id: null,
       data: [],
       isSelected: false

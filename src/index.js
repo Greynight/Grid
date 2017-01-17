@@ -1,12 +1,8 @@
 /**
  * App entry point
  */
-// TODO check if we need include libraries
-// Polyfill
-//import 'babel-polyfill';
 
-// Libraries
-//import React from 'react';
+import './index.css';
 
 // TODO overridable pagination template
 // TODO fixed columns
@@ -20,18 +16,20 @@ let config = {
   showFooter: true,
   enableSelection: true,
   enableEditing: true,
-  enablePagination: false,
+  enablePagination: true,
   enableSorting: true,
   internalSorting: true,
   externalSorting: false,
   internalPaging: false,
-  externalPaging: false
+  externalPaging: false,
+  paginationTemplate: false,
+  paginationRowsNumList: [25, 50, 100]
 };
 
 let schema = {
   'id': {
     id: 'id',
-      title: 'Id',
+    title: 'Id',
     // template isn't required, so 'text' will be used
     // some way to define templates and store them is needed
     type: 'text',
@@ -82,14 +80,4 @@ let grid = new Grid({config, schema, columns, data});
 
 grid.renderGrid();
 
-/*window.onload = function() {
-  // TODO
-  console.log("window.onLoad");
-  document.getElementById("grid").onscroll = function(){
-  //document.onscroll = function(){
-    console.log(this.scrollTop);
-    var translate = "translate(0,"+this.scrollTop+"px)";
-    this.querySelector("thead").style.transform = translate;
-  };
-};*/
 //grid.setColumns(['second'], ['id']);

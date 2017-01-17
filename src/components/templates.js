@@ -1,5 +1,3 @@
-"use strict";
-
 import React from 'react';
 
 const MIN_WIDTH = 100;
@@ -63,12 +61,6 @@ export default class Templates {
             <input type="text" defaultValue={this.data} onChange={this.onValueChange} />
           </div>),
         type: 'string'
-      },
-      actions: {
-        type: 'actions'
-      },
-      select: {
-        type: 'select'
       }
     };
   }

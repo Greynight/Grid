@@ -1,16 +1,14 @@
-"use strict";
-
 import React from 'react';
 
 import Row from './row';
 import CheckboxTitleCell from './cell-checkbox-title';
 import TitleCell from './cell-title';
-import ActionsCell from './cell-actions';
+//import ActionsCell from './cell-actions';
 
 class TitleRow extends Row {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
-  }
+  }*/
 
   getIsAllSelected = () => {
     return this.props.isAllSelected;
@@ -24,8 +22,8 @@ class TitleRow extends Row {
     return (
       <td key="selectAll">
         <CheckboxTitleCell
-          onCheckboxAllClick = {this.getActions().onCheckboxAllClick}
-          isAllSelected = {this.getIsAllSelected()}
+          onCheckboxAllClick={this.getActions().onCheckboxAllClick}
+          isAllSelected={this.getIsAllSelected()}
         />
       </td>
     );
@@ -35,9 +33,9 @@ class TitleRow extends Row {
     return (
       <th key={columnSchema.id}>
         <TitleCell
-          columnSchema = {columnSchema}
-          orderDir = {this.getOrderDir()}
-          onSortClick = {this.getActions().onSortClick} />
+          columnSchema={columnSchema}
+          orderDir={this.getOrderDir()}
+          onSortClick={this.getActions().onSortClick} />
       </th>
     );
   };

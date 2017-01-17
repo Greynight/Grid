@@ -1,18 +1,16 @@
-"use strict";
-
 import React from 'react';
 
 import Row from './row';
 import FooterCell from './cell-footer';
 
 class RowFooter extends Row {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
-  }
+  }*/
 
   getCheckboxCell = (checkboxId) => {
     return (
-      <td key = {this.createColumnKey(checkboxId)}>
+      <td key={this.createColumnKey(checkboxId)}>
         <div></div>
       </td>
     );
@@ -20,7 +18,7 @@ class RowFooter extends Row {
 
   getActionsCell = (actionId) => {
     return (
-      <td key = {this.createColumnKey(actionId)}>
+      <td key={this.createColumnKey(actionId)}>
         <div></div>
       </td>
     );
@@ -28,10 +26,10 @@ class RowFooter extends Row {
 
   getFooterCell = (cellData, cellId, columnSchema) => {
     return (
-      <td key = {this.createColumnKey(cellId)}>
+      <td key={this.createColumnKey(cellId)}>
         <FooterCell
-          cellData = {cellData}
-          columnSchema = {columnSchema}
+          cellData={cellData}
+          columnSchema={columnSchema}
         />
       </td>
     );
@@ -66,7 +64,7 @@ class RowFooter extends Row {
     }
 
     return (
-      <tr key = {rowId}>
+      <tr key={rowId}>
         {cells}
       </tr>
     );

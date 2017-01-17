@@ -1,5 +1,3 @@
-"use strict";
-
 import React from 'react';
 
 import Cell from './cell';
@@ -26,8 +24,6 @@ class ActionsCell extends Cell {
     this.changeToEditMode = this.props.changeToEditMode;
     this.changeToReadMode = this.props.changeToReadMode;
 
-
-    // TODO add new row as the first
     if (this.rowData.id === null) {
       this.state.isEditing = true;
     }

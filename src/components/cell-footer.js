@@ -1,5 +1,3 @@
-"use strict";
-
 import Cell from './cell';
 
 class FooterCell extends Cell {
